@@ -1,0 +1,45 @@
+---
+title: "daf_analysis"
+author: "Murray Cadzow"
+date: "29 April 2015"
+output: html_document
+---
+
+```{r, fig.height=9, fig.width=12}
+library(dplyr)
+library(data.table)
+library(ggplot2)
+library(scales)
+library(rehh)
+library(qqman)
+library(knitr)
+library(readr)
+opts_knit$set(root.dir="/run/user//1001//gvfs/smb-share:server=biocldap,share=scratch/merrimanlab/murray/working_dir/extract/daf/")
+#setwd("/run/user//1001//gvfs/smb-share:server=biocldap,share=scratch/merrimanlab/murray/working_dir/extract/daf/")
+
+read_pop_daf=function(pop){
+  daf=data.table()
+  for( i in 1:22){
+    if(file.exists(file = paste0(pop,i,"_aachanged.af"))){
+      tmp=read_delim(file=paste0(pop,i,"_aachanged.af"), delim="\t", col_names=c("Pos", "Ref", "Alt", "Anc", "MAF", "DAF"), skip = 1)
+      tmp$Chr = i
+      daf=rbindlist(list(daf,tmp))
+    } else {
+      print(paste0(pop,i,"_aachanged.af is missing"))
+    
+      }
+  }
+  return(daf)
+}
+
+POP1="AXIOM"
+axiom= read_pop_daf(POP1)
+POP2 = "CHB"
+chb = read_pop_daf(POP2)
+
+for( pop2 in c("OMNI","CEU")){
+  ggplot(a, aes(x=Pos, y=DAF.x - DAF.y)) + facet_wrap(~Chr, scales = "free_x") + geom_point()
+
+}
+
+```
