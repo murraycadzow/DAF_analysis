@@ -15,7 +15,8 @@ library(qqman)
 library(knitr)
 library(readr)
 opts_knit$set(root.dir="/run/user//1001//gvfs/smb-share:server=biocldap,share=scratch/merrimanlab/murray/working_dir/extract/daf/")
-#setwd("/run/user//1001//gvfs/smb-share:server=biocldap,share=scratch/merrimanlab/murray/working_dir/extract/daf/")
+print(getwd())
+setwd("/run/user//1001//gvfs/smb-share:server=biocldap,share=scratch/merrimanlab/murray/working_dir/extract/daf/")
 
 read_pop_daf=function(pop){
   daf=data.table()
@@ -33,12 +34,11 @@ read_pop_daf=function(pop){
 }
 
 POP1="AXIOM"
-axiom= read_pop_daf(POP1)
-POP2 = "CHB"
-chb = read_pop_daf(POP2)
+pop1= read_pop_daf(POP1)
 
-for( pop2 in c("OMNI","CEU")){
-  ggplot(a, aes(x=Pos, y=DAF.x - DAF.y)) + facet_wrap(~Chr, scales = "free_x") + geom_point()
+for( POP2 in c("OMNI","CHB","CHB","CHS","GBR", "YRI")){
+  a=inner_join(pop1, read_pop_daf(POP2), by=c("Chr","Pos"))
+  plot(ggplot(a, aes(x=Pos, y=DAF.x - DAF.y)) + facet_wrap(~Chr, scales = "free_x") + geom_hex() + ggtitle(paste(POP1,POP2, sep=" ")))
 
 }
 
